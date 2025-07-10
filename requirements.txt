@@ -1,23 +1,24 @@
 # 核心框架
-langchain==0.1.0  # LangChain核心框架
-langchain-openai==0.0.5  # OpenAI集成
-langchain-community==0.0.10  # 社区工具集
+langchain>=0.1.0  # LangChain核心框架
+langchain-openai>=0.0.5  # OpenAI集成
+langchain-community>=0.0.10  # 社区工具集
 
 # 向量数据库
-chromadb==0.4.22  # 轻量级向量数据库
-faiss-cpu==1.7.4  # Facebook向量搜索库
+chromadb>=0.4.22  # 轻量级向量数据库
+faiss-cpu>=1.7.4  # Facebook向量搜索库
 
 # Agent框架
-langgraph==0.0.20  # 工作流编排
-crewai==0.1.0  # 多Agent协作框架
+langgraph>=0.0.20  # LangGraph工作流编排
+crewai>=0.141.0  # 最新版CrewAI（独立框架，不依赖LangChain）
 
 # 开发工具
-jupyter==1.0.0  # 交互式开发
-streamlit==1.29.0  # Web应用框架
-python-dotenv==1.0.0  # 环境变量管理
+jupyter>=1.0.0  # 交互式开发
+streamlit>=1.29.0  # Web应用框架
+python-dotenv>=1.0.0  # 环境变量管理
 
 # 其他依赖
-requests==2.31.0  # HTTP请求
-beautifulsoup4==4.12.2  # 网页解析
-pandas==2.1.4  # 数据处理
-numpy==1.26.2  # 数值计算
+requests>=2.31.0  # HTTP请求
+beautifulsoup4>=4.12.2  # 网页解析
+pandas>=2.1.4  # 数据处理
+numpy>=1.26.2  # 数值计算
+openai>=1.0.0  # OpenAI客户端

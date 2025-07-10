@@ -98,6 +98,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **常量定义**：所有魔法数字和字符串定义为有意义的常量
 - **环境隔离**：开发、测试、生产环境严格隔离
 
+### 文件管理原则
+- **禁止创建冗余文件**：不要创建 -simple、-backup、-old、-new 等后缀的文件
+- **保持文件唯一性**：每个功能只维护一个文件，通过版本控制管理变更
+- **避免临时文件**：不要创建临时测试文件，使用 notebooks 进行实验
+- **配置文件单一**：一个 requirements.txt、一个 .env，不要创建多个版本
+- **代码重构原则**：直接修改原文件，不要创建新文件再删除旧文件
+
 ## Project Overview
 
 This is `ai-guide`, a comprehensive AI technology learning repository focused on modern AI stack including RAG (Retrieval-Augmented Generation), LangChain, LangGraph, Agent workflows, and MCP (Model Context Protocol). The project serves as both a learning resource and practical implementation guide.
