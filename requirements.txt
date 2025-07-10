@@ -22,3 +22,4 @@ beautifulsoup4>=4.12.2  # 网页解析
 pandas>=2.1.4  # 数据处理
 numpy>=1.26.2  # 数值计算
 openai>=1.0.0  # OpenAI客户端
+rank_bm25>=0.2.0  # BM25检索

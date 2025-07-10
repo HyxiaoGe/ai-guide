@@ -8,3 +8,6 @@
 .coverage
 .coverage.*
 .coverage.xml
+
+chroma_db
+faiss_index
