@@ -105,6 +105,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **配置文件单一**：一个 requirements.txt、一个 .env，不要创建多个版本
 - **代码重构原则**：直接修改原文件，不要创建新文件再删除旧文件
 
+### Jupyter Notebook规范
+- **内核配置统一**：所有notebook使用统一的kernelspec配置
+  - display_name: "ai-guide"
+  - version: "3.12.11"
+- **模板文件**：参考.notebook_template.json确保配置一致性
+- **元数据管理**：保持notebook metadata的统一格式
+
 ## Project Overview
 
 This is `ai-guide`, a comprehensive AI technology learning repository focused on modern AI stack including RAG (Retrieval-Augmented Generation), LangChain, LangGraph, Agent workflows, and MCP (Model Context Protocol). The project serves as both a learning resource and practical implementation guide.
