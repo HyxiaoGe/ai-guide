@@ -20,9 +20,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   
   🤖 Generated with [Claude Code](https://claude.ai/code)
   
-  Co-authored-by: Claude Code <claude-code@anthropic.com>
+  Co-Authored-By: Claude <noreply@anthropic.com>
   ```
-- **必须包含 Co-author 信息**：每个提交都要包含 `Co-authored-by: Claude Code <claude-code@anthropic.com>`
+- **必须包含 Co-author 信息**：每个提交都要包含 `Co-Authored-By: Claude <noreply@anthropic.com>`
 - **使用中文提交类型**：
   - `feat`: 新功能
   - `fix`: 修复bug
