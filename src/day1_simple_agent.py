@@ -17,6 +17,10 @@ from dotenv import load_dotenv
 # 加载环境变量
 load_dotenv()
 
+# 禁用LangSmith追踪（避免403错误）
+os.environ["LANGCHAIN_TRACING_V2"] = "false"
+os.environ["LANGCHAIN_TRACING"] = "false"
+
 
 class SimpleAgent:
     """简单的AI Agent实现"""
@@ -152,8 +156,9 @@ class SimpleAgent:
             Agent的回答
         """
         try:
-            response = self.agent.run(query)
-            return response
+            # 使用invoke方法替代已弃用的run方法
+            response = self.agent.invoke({"input": query})
+            return response["output"]
         except Exception as e:
             return f"处理出错：{str(e)}"
 
