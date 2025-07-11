@@ -8,7 +8,7 @@ chromadb>=0.4.22  # 轻量级向量数据库
 faiss-cpu>=1.7.4  # Facebook向量搜索库
 
 # Agent框架
-langgraph>=0.0.20  # LangGraph工作流编排
+langgraph>=0.2.0  # LangGraph工作流编排（更新到最新版本）
 crewai>=0.141.0  # 最新版CrewAI（独立框架，不依赖LangChain）
 
 # 开发工具
@@ -23,3 +23,4 @@ pandas>=2.1.4  # 数据处理
 numpy>=1.26.2  # 数值计算
 openai>=1.0.0  # OpenAI客户端
 rank_bm25>=0.2.0  # BM25检索
+uuid  # UUID生成（标准库，但明确列出）
