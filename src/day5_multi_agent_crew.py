@@ -311,7 +311,7 @@ class ResearchWritingCrew:
         self.crew = Crew(
             agents=list(self.agents.values()),
             tasks=self.tasks,
-            verbose=2,  # 详细输出
+            verbose=True,  # 详细输出
             process=Process.sequential  # 顺序执行
         )
         
@@ -362,7 +362,7 @@ def demonstrate_simple_collaboration():
     print("="*60)
     
     # 创建简单的LLM实例
-    llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.7)
+    llm = ChatOpenAI(model="gpt-4.1-2025-04-14", temperature=0.7)
     
     # 创建研究员
     researcher = Agent(
@@ -401,7 +401,7 @@ def demonstrate_simple_collaboration():
     simple_crew = Crew(
         agents=[researcher, summarizer],
         tasks=[research_task, summary_task],
-        verbose=2,
+        verbose=True,
         process=Process.sequential
     )
     

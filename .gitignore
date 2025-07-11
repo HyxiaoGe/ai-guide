@@ -10,4 +10,6 @@
 .coverage.xml
 
 chroma_db
+rag_chroma_db
 faiss_index
+output

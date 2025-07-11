@@ -56,10 +56,31 @@ class SimpleAgent:
             """
             try:
                 # 安全评估数学表达式
-                allowed_names = {
-                    k: v for k, v in __builtins__.items() 
-                    if k in ['abs', 'round', 'min', 'max', 'sum', 'pow']
-                }
+                import builtins
+                
+                # 安全的内置函数列表
+                safe_builtins = ['abs', 'round', 'min', 'max', 'sum', 'pow']
+                allowed_names = {}
+                
+                for name in safe_builtins:
+                    if hasattr(builtins, name):
+                        allowed_names[name] = getattr(builtins, name)
+                
+                # 添加数学运算符和常用数学函数
+                import math
+                allowed_names.update({
+                    'pi': math.pi,
+                    'e': math.e,
+                    'sqrt': math.sqrt,
+                    'sin': math.sin,
+                    'cos': math.cos,
+                    'tan': math.tan,
+                    'log': math.log,
+                })
+                
+                # 处理Python的乘方运算符
+                expression = expression.replace('^', '**')
+                
                 result = eval(expression, {"__builtins__": {}}, allowed_names)
                 return f"计算结果：{result}"
             except Exception as e:

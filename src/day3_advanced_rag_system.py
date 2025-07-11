@@ -19,7 +19,7 @@ from langchain.schema import Document
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser, PydanticOutputParser
 from langchain_core.runnables import RunnablePassthrough
-from langchain_core.pydantic_v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 from langchain.retrievers import BM25Retriever, EnsembleRetriever
 
 # 环境配置
@@ -464,7 +464,7 @@ def create_sample_knowledge_base():
             AI的主要目标包括学习、推理、感知、语言理解和问题解决。现代AI主要基于机器学习技术，特别是深度学习。
             AI应用广泛，包括自然语言处理、计算机视觉、语音识别、推荐系统、自动驾驶等领域。
             """,
-            "metadata": {"category": "基础概念", "keywords": ["人工智能", "AI", "机器学习"]}
+            "metadata": {"category": "基础概念", "keywords": "人工智能,AI,机器学习"}
         },
         {
             "title": "深度学习技术",
@@ -474,7 +474,7 @@ def create_sample_knowledge_base():
             循环神经网络（RNN）和长短期记忆网络（LSTM）适合处理序列数据，如文本和时间序列。
             Transformer架构彻底改变了自然语言处理领域，GPT、BERT等大型语言模型都基于此架构。
             """,
-            "metadata": {"category": "技术详解", "keywords": ["深度学习", "CNN", "RNN", "Transformer"]}
+            "metadata": {"category": "技术详解", "keywords": "深度学习,CNN,RNN,Transformer"}
         },
         {
             "title": "自然语言处理",
@@ -484,7 +484,7 @@ def create_sample_knowledge_base():
             现代NLP主要基于深度学习，特别是Transformer架构的预训练语言模型。
             主要应用包括机器翻译、文本摘要、情感分析、问答系统、对话系统等。
             """,
-            "metadata": {"category": "应用领域", "keywords": ["NLP", "自然语言处理", "机器翻译"]}
+            "metadata": {"category": "应用领域", "keywords": "NLP,自然语言处理,机器翻译"}
         }
     ]
 

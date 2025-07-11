@@ -8,8 +8,8 @@ import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import JsonOutputParser, StrOutputParser
-from langchain_core.pydantic_v1 import BaseModel, Field
+from langchain_core.output_parsers import PydanticOutputParser, StrOutputParser
+from pydantic import BaseModel, Field
 from langchain.memory import (
     ConversationBufferMemory, 
     ConversationBufferWindowMemory,
@@ -53,7 +53,7 @@ class AdvancedConversationSystem:
         self.memory_type = memory_type
         
         # 用户画像提取器
-        self.profile_parser = JsonOutputParser(pydantic_object=UserProfile)
+        self.profile_parser = PydanticOutputParser(pydantic_object=UserProfile)
         
         # 创建对话链
         self.conversation = self._create_conversation_chain()
@@ -111,13 +111,26 @@ class AdvancedConversationSystem:
         """从对话历史中提取用户画像"""
         prompt = ChatPromptTemplate.from_messages([
             ("system", """
-            基于以下对话历史，提取用户的基本信息。
-            
+            你是一个专业的用户画像分析师。请基于对话历史分析用户信息，并返回JSON格式的数据。
+
+            分析要求：
+            1. 仔细阅读对话历史，提取用户的姓名、职业、兴趣等信息
+            2. 如果某些信息不明确，请根据上下文合理推测
+            3. 如果完全没有提及，请填写"未知"
+            4. 必须返回有效的JSON格式，包含所有必需字段
+
+            返回格式示例：
+            {{
+                "name": "李华",
+                "profession": "大学生",
+                "interests": ["人工智能", "编程"],
+                "learning_goals": ["学习机器学习", "提高编程技能"],
+                "experience_level": "beginner"
+            }}
+
             {format_instructions}
-            
-            如果某些信息不明确，请使用合理的推测或标记为"未知"。
             """),
-            ("human", "对话历史：\n{history}")
+            ("human", "请分析以下对话历史并提取用户画像：\n\n{history}")
         ])
         
         chain = prompt | self.llm | self.profile_parser
@@ -130,7 +143,54 @@ class AdvancedConversationSystem:
             return result
         except Exception as e:
             print(f"用户画像提取失败: {e}")
-            return None
+            # 如果解析失败，尝试创建一个默认的用户画像
+            try:
+                # 简单的fallback：从对话中提取基本信息
+                lines = conversation_history.split('\n')
+                name = "未知"
+                profession = "未知"
+                interests = []
+                
+                for line in lines:
+                    if "我是" in line or "我叫" in line:
+                        # 简单提取姓名
+                        if "我是" in line:
+                            parts = line.split("我是")
+                            if len(parts) > 1:
+                                name_part = parts[1].split("，")[0].split(",")[0].strip()
+                                if name_part and len(name_part) < 10:
+                                    name = name_part
+                        if "我叫" in line:
+                            parts = line.split("我叫")
+                            if len(parts) > 1:
+                                name_part = parts[1].split("，")[0].split(",")[0].strip()
+                                if name_part and len(name_part) < 10:
+                                    name = name_part
+                    
+                    if "学生" in line:
+                        profession = "学生"
+                    elif "专业" in line:
+                        profession = "专业学生"
+                    
+                    if "人工智能" in line or "AI" in line:
+                        interests.append("人工智能")
+                    if "机器学习" in line or "ML" in line:
+                        interests.append("机器学习")
+                    if "编程" in line or "程序" in line:
+                        interests.append("编程")
+                
+                # 创建一个简单的字典作为fallback
+                fallback_profile = {
+                    "name": name,
+                    "profession": profession,
+                    "interests": interests if interests else ["未知"],
+                    "learning_goals": ["提升技能"],
+                    "experience_level": "beginner"
+                }
+                
+                return fallback_profile
+            except:
+                return None
     
     def chat(self, message: str) -> str:
         """进行对话"""
@@ -240,11 +300,19 @@ def interactive_conversation_demo():
                 profile = system.extract_user_profile(memory_info['content_preview'])
                 if profile:
                     print(f"\n👤 用户画像分析:")
-                    print(f"姓名: {profile.name}")
-                    print(f"职业: {profile.profession}")
-                    print(f"兴趣: {', '.join(profile.interests)}")
-                    print(f"学习目标: {', '.join(profile.learning_goals)}")
-                    print(f"经验水平: {profile.experience_level}")
+                    # 兼容字典和对象两种格式
+                    if isinstance(profile, dict):
+                        print(f"姓名: {profile.get('name', '未知')}")
+                        print(f"职业: {profile.get('profession', '未知')}")
+                        print(f"兴趣: {', '.join(profile.get('interests', []))}")
+                        print(f"学习目标: {', '.join(profile.get('learning_goals', []))}")
+                        print(f"经验水平: {profile.get('experience_level', '未知')}")
+                    else:
+                        print(f"姓名: {profile.name}")
+                        print(f"职业: {profile.profession}")
+                        print(f"兴趣: {', '.join(profile.interests)}")
+                        print(f"学习目标: {', '.join(profile.learning_goals)}")
+                        print(f"经验水平: {profile.experience_level}")
                 else:
                     print("用户画像分析失败")
             else:
