@@ -16,6 +16,9 @@ jupyter>=1.0.0  # 交互式开发
 streamlit>=1.29.0  # Web应用框架
 python-dotenv>=1.0.0  # 环境变量管理
 
+# MCP依赖
+mcp>=1.0.0  # Model Context Protocol
+
 # 其他依赖
 requests>=2.31.0  # HTTP请求
 beautifulsoup4>=4.12.2  # 网页解析
@@ -24,3 +27,11 @@ numpy>=1.26.2  # 数值计算
 openai>=1.0.0  # OpenAI客户端
 rank_bm25>=0.2.0  # BM25检索
 uuid  # UUID生成（标准库，但明确列出）
+
+# 异步数据库驱动（可选）
+asyncpg>=0.29.0  # PostgreSQL异步驱动
+aiomysql>=0.2.0  # MySQL异步驱动
+
+# 监控和指标（可选）
+prometheus-client>=0.19.0  # Prometheus指标
+python-json-logger>=2.0.0  # 结构化日志
