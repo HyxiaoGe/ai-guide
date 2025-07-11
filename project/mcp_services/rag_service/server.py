@@ -9,8 +9,13 @@ import os
 import logging
 from typing import Any, Dict, List, Optional
 from pathlib import Path
+from dotenv import load_dotenv
 
-from mcp.server import Server, stdio_server
+# 加载环境变量
+load_dotenv()
+
+from mcp.server import Server
+from mcp import stdio_server
 from mcp.server.models import InitializationOptions
 from mcp.types import (
     Tool,
@@ -21,7 +26,7 @@ from mcp.types import (
 )
 
 # RAG相关导入
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_openai import ChatOpenAI
@@ -73,11 +78,9 @@ class DocumentAssistantRAGService:
         """初始化RAG组件"""
         try:
             logger.info("初始化嵌入模型...")
-            # 使用本地嵌入模型
-            self.embeddings = HuggingFaceEmbeddings(
-                model_name="sentence-transformers/all-MiniLM-L6-v2",
-                model_kwargs={'device': 'cpu'},
-                encode_kwargs={'normalize_embeddings': True}
+            # 使用OpenAI嵌入模型
+            self.embeddings = OpenAIEmbeddings(
+                model="text-embedding-3-small"
             )
             
             logger.info("初始化向量数据库...")
@@ -117,9 +120,13 @@ class DocumentAssistantRAGService:
     def _setup_handlers(self):
         """设置MCP处理器"""
         
+        # 添加连接事件监控
+        # 我们将在每个handler中添加日志记录
+        
         @self.server.list_tools()
         async def handle_list_tools() -> list[Tool]:
             """定义RAG服务的所有工具"""
+            logger.info("🔗 客户端已连接，正在获取工具列表...")
             return [
                 # 文档管理工具
                 Tool(
@@ -341,6 +348,7 @@ class DocumentAssistantRAGService:
         @self.server.list_resources()
         async def handle_list_resources() -> list[Resource]:
             """列出可用的资源"""
+            logger.info("📁 客户端请求资源列表")
             return [
                 Resource(
                     uri="rag://stats",
@@ -670,12 +678,24 @@ class DocumentAssistantRAGService:
         logger.info("🚀 启动文档助手RAG MCP服务...")
         logger.info("📡 等待客户端连接...")
         
-        async with stdio_server() as (read_stream, write_stream):
-            await self.server.run(
-                read_stream,
-                write_stream,
-                InitializationOptions()
-            )
+        try:
+            async with stdio_server() as (read_stream, write_stream):
+                logger.info("🔌 服务器已准备就绪，监听客户端连接...")
+                
+                await self.server.run(
+                    read_stream,
+                    write_stream,
+                    InitializationOptions(
+                        server_name="doc-assistant-rag",
+                        server_version="1.0.0",
+                        capabilities={}
+                    )
+                )
+        except Exception as e:
+            logger.error(f"❌ 服务器运行异常: {e}")
+            raise
+        finally:
+            logger.info("🔌 客户端连接已断开")
 
 async def main():
     """主函数"""

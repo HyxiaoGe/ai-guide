@@ -3,6 +3,25 @@
 
 echo "🚀 开始设置智能文档助手系统..."
 
+# 检查系统依赖
+echo "🔍 检查系统依赖..."
+if ! command -v python3 &> /dev/null; then
+    echo "❌ Python3 未安装，请先运行: sudo apt install python3"
+    exit 1
+fi
+
+if ! python3 -m venv --help &> /dev/null; then
+    echo "❌ python3-venv 未安装，请先运行: sudo apt install python3-venv"
+    exit 1
+fi
+
+if ! command -v pip3 &> /dev/null; then
+    echo "❌ pip3 未安装，请先运行: sudo apt install python3-pip"  
+    exit 1
+fi
+
+echo "✅ 系统依赖检查通过"
+
 # 创建项目目录结构
 echo "📁 创建项目目录结构..."
 mkdir -p mcp_services/{rag_service,file_service,tools_service}
@@ -13,10 +32,25 @@ mkdir -p frontend
 mkdir -p docker
 mkdir -p tests
 mkdir -p data/{uploads,vector_db,cache}
+mkdir -p logs
+
+# 清理可能存在的虚拟环境
+if [ -d "venv" ]; then
+    echo "🧹 清理旧的虚拟环境..."
+    rm -rf venv
+fi
 
 # 创建Python虚拟环境
 echo "🐍 创建Python虚拟环境..."
 python3 -m venv venv
+
+if [ ! -f "venv/bin/activate" ]; then
+    echo "❌ 虚拟环境创建失败"
+    exit 1
+fi
+
+# 激活虚拟环境
+echo "⚡ 激活虚拟环境..."
 source venv/bin/activate
 
 # 安装基础依赖
@@ -208,10 +242,105 @@ black>=23.12.0
 isort>=5.13.0
 EOF
 
+# 创建启动脚本
+echo "🚀 创建启动脚本..."
+cat > start.sh << 'EOF'
+#!/bin/bash
+# 启动智能文档助手系统
+
+echo "🚀 启动智能文档助手系统..."
+
+# 激活虚拟环境
+source venv/bin/activate
+
+# 检查环境变量
+if ! grep -q "sk-" .env 2>/dev/null; then
+    echo "⚠️  请先在 .env 文件中配置 OPENAI_API_KEY"
+    echo "编辑命令: nano .env"
+    exit 1
+fi
+
+# 启动数据库（如果Docker可用）
+if command -v docker-compose &> /dev/null; then
+    echo "🐳 启动数据库服务..."
+    docker-compose up -d postgres redis
+    sleep 5
+else
+    echo "⚠️  Docker Compose 未安装，将使用内存数据库"
+fi
+
+# 启动RAG服务
+echo "📚 启动RAG MCP服务..."
+python mcp_services/rag_service/server.py
+EOF
+
+chmod +x start.sh
+
+# 创建测试脚本
+echo "🧪 创建测试脚本..."
+cat > test.py << 'EOF'
+#!/usr/bin/env python3
+"""系统测试脚本"""
+
+import sys
+import os
+
+def test_imports():
+    """测试关键包导入"""
+    print("🧪 测试包导入...")
+    
+    packages = [
+        ("mcp", "MCP"),
+        ("langchain", "LangChain"), 
+        ("chromadb", "ChromaDB"),
+        ("openai", "OpenAI"),
+        ("fastapi", "FastAPI"),
+        ("streamlit", "Streamlit"),
+    ]
+    
+    success = 0
+    for package, name in packages:
+        try:
+            __import__(package)
+            print(f"✅ {name}")
+            success += 1
+        except ImportError as e:
+            print(f"❌ {name}: {e}")
+    
+    return success == len(packages)
+
+def main():
+    print("🔬 智能文档助手系统 - 环境测试")
+    print("=" * 50)
+    
+    if test_imports():
+        print("\n🎉 所有依赖包导入成功！")
+        print("\n💡 下一步:")
+        print("  1. 配置 .env 文件中的 API 密钥")
+        print("  2. 运行: ./start.sh")
+        return 0
+    else:
+        print("\n❌ 依赖包测试失败")
+        return 1
+
+if __name__ == "__main__":
+    sys.exit(main())
+EOF
+
+chmod +x test.py
+
+# 复制环境配置文件
+if [ ! -f ".env" ]; then
+    cp .env.example .env
+    echo "✅ 环境配置文件已创建，请编辑 .env 文件添加你的API密钥"
+else
+    echo "✅ .env 文件已存在"
+fi
+
+echo ""
 echo "✅ 环境设置完成！"
 echo ""
-echo "下一步："
-echo "1. 复制 .env.example 到 .env 并填写配置"
-echo "2. 启动数据库服务: docker-compose up -d postgres redis"
-echo "3. 运行 'source venv/bin/activate' 激活虚拟环境"
-echo "4. 开始实现第一个MCP服务"
+echo "📋 下一步操作："
+echo "1. 配置API密钥: nano .env"
+echo "2. 测试环境: python test.py"
+echo "3. 启动系统: ./start.sh"

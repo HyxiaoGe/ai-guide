@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rag-mcp:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.mcp
+    environment:
+      - SERVICE_TYPE=rag
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./mcp_services/rag_service:/app
+      - ./data/vector_db:/data/vector_db
+    ports:
+      - "8001:8001"
+    depends_on:
+      - redis
+
+  file-mcp:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.mcp
+    environment:
+      - SERVICE_TYPE=file
+    volumes:
+      - ./mcp_services/file_service:/app
+      - ./data/uploads:/data/uploads
+    ports:
+      - "8002:8002"
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    environment:
+      - DATABASE_URL=postgresql://fusion:fusion123!!@host.docker.internal:5432/docassistant
+      - REDIS_URL=redis://redis:6379/0
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./api_gateway:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - rag-mcp
+      - file-mcp
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+    environment:
+      - API_URL=http://api-gateway:8000
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "8501:8501"
+    depends_on:
+      - api-gateway
+
+volumes:
+  redis_data:
+
+networks:
+  default:
+    name: docassistant_network

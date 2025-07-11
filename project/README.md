@@ -1,185 +1,166 @@
-# 智能文档助手系统 - 综合实战项目
+# 智能文档助手 - MCP RAG 系统
 
-## 项目目标
+基于 MCP (Model Context Protocol) 协议的智能文档检索和问答系统，集成了 RAG、LangChain、ChromaDB 等现代 AI 技术栈。
 
-构建一个企业级的智能文档助手系统，整合AI Guide课程中学到的所有技术：
-- **MCP协议**：标准化的服务接口
-- **RAG技术**：智能文档检索和问答
-- **LangGraph**：复杂工作流编排
-- **Multi-Agent**：多智能体协作
-- **LangChain**：基础框架支持
+## 🎯 项目概述
 
-## 系统架构
+这是一个企业级的智能文档管理和问答系统，使用 MCP 协议实现标准化的 AI 工具调用，为文档检索和智能问答提供统一的接口。
 
-```
-┌────────────────────────────────────────────────────────────────┐
-│                        前端应用层                                │
-│                  (Streamlit / Gradio)                           │
-├────────────────────────────────────────────────────────────────┤
-│                      API Gateway                                │
-│                  (FastAPI + Auth)                              │
-├──────────────┬──────────────┬──────────────┬─────────────────┤
-│ MCP Services │  Workflow    │ Agent System │   Storage       │
-├──────────────┼──────────────┼──────────────┼─────────────────┤
-│ RAG MCP      │ LangGraph    │ CrewAI       │ PostgreSQL      │
-│ File MCP     │ Orchestrator │ Agents       │ Redis           │
-│ Tools MCP    │ State Mgmt   │ Coordinator  │ Vector DB       │
-└──────────────┴──────────────┴──────────────┴─────────────────┘
-```
+## 🔧 技术栈
 
-## 核心功能
+- **AI 框架**: LangChain, OpenAI GPT
+- **向量数据库**: ChromaDB
+- **关系数据库**: PostgreSQL
+- **协议**: MCP (Model Context Protocol)
+- **后端**: Python, FastAPI
+- **部署**: Docker
 
-1. **智能文档管理**
-   - 上传和解析多种格式文档（PDF、Word、Markdown）
-   - 自动提取和索引文档内容
-   - 智能分类和标签管理
+## ✨ 功能特性
 
-2. **高级检索问答**
-   - 基于RAG的精准检索
-   - 多轮对话理解
-   - 引用来源追踪
+### 📚 当前功能
 
-3. **自动化工作流**
-   - 文档摘要生成
-   - 报告自动撰写
-   - 知识图谱构建
+- **文档管理**: 添加、批量导入、元数据管理
+- **智能检索**: 语义搜索、关键词搜索、混合搜索
+- **问答系统**: 基于上下文的问答、多轮对话、文档摘要
+- **MCP 服务**: 9个核心工具、实时连接监控
 
-4. **多Agent协作**
-   - 研究Agent：深度分析文档
-   - 写作Agent：生成高质量内容
-   - 审核Agent：质量把关
+### 🔧 核心工具
 
-## 技术栈
+1. `add_document` - 添加文档到知识库
+2. `batch_add_documents` - 批量添加多个文档
+3. `search_documents` - 在知识库中搜索相关文档
+4. `semantic_search` - 高级语义搜索
+5. `answer_question` - 基于知识库回答问题
+6. `multi_turn_chat` - 多轮对话问答
+7. `summarize_documents` - 生成文档摘要
+8. `get_collection_stats` - 获取知识库统计信息
+9. `clear_collection` - 清空知识库
 
-- **后端框架**: FastAPI + Uvicorn
-- **MCP实现**: Python MCP SDK
-- **向量数据库**: ChromaDB / Weaviate
-- **LLM**: OpenAI GPT-4 / Claude
-- **工作流**: LangGraph
-- **Agent框架**: CrewAI
-- **前端**: Streamlit / Gradio
-- **部署**: Docker + Docker Compose
-- **监控**: Prometheus + Grafana
+## 🚀 快速开始
 
-## 项目结构
+### 📋 环境要求
+
+- Python 3.10+
+- PostgreSQL (可使用现有容器)
+- OpenAI API Key
+
+### 🔧 安装步骤
+
+1. **环境设置**
+   ```bash
+   cd project
+   ./setup.sh
+   ```
+
+2. **配置 API 密钥**
+   ```bash
+   nano .env  # 设置 OPENAI_API_KEY
+   ```
+
+3. **启动服务**
+   ```bash
+   ./start.sh
+   ```
+
+4. **测试环境**
+   ```bash
+   python test.py
+   ```
+
+## 📊 项目结构
 
 ```
 project/
-├── mcp_services/          # MCP服务
-│   ├── rag_service/      # RAG服务
-│   ├── file_service/     # 文件管理服务
-│   └── tools_service/    # 工具服务
-├── api_gateway/          # API网关
-│   ├── main.py
-│   ├── auth.py
-│   └── routes/
-├── workflows/            # LangGraph工作流
-│   ├── document_flow.py
-│   └── research_flow.py
-├── agents/              # Multi-Agent系统
-│   ├── research_crew.py
-│   └── writing_crew.py
-├── frontend/            # 前端应用
-│   └── streamlit_app.py
-├── docker/              # Docker配置
-│   ├── Dockerfile
-│   └── docker-compose.yml
-└── tests/               # 测试套件
+├── mcp_services/           # MCP服务
+│   └── rag_service/        # RAG问答服务
+│       └── server.py       # 核心服务器
+├── data/                   # 数据存储
+│   ├── vector_db/          # 向量数据库
+│   ├── uploads/            # 文件上传
+│   └── cache/              # 缓存
+├── .env                    # 环境变量配置
+├── docker-compose.yml      # Docker配置
+├── requirements.txt        # Python依赖
+├── setup.sh               # 环境设置脚本
+├── start.sh               # 启动脚本
+└── test.py                # 环境测试脚本
 ```
 
-## 实施步骤
+## 🏗️ 架构设计
 
-### 第一阶段：基础设施（Day 1-2）
-1. 搭建项目结构
-2. 配置Docker环境
-3. 实现基础MCP服务
-4. 设置数据库连接
+### 数据流
 
-### 第二阶段：核心服务（Day 3-4）
-1. 实现RAG MCP服务
-2. 构建文件管理系统
-3. 创建工具服务
-4. 集成向量数据库
+```
+MCP客户端 ←→ MCP服务器 ←→ RAG引擎 ←→ 数据库
+                                   ├── ChromaDB (向量)
+                                   └── PostgreSQL (关系)
+```
 
-### 第三阶段：工作流程（Day 5-6）
-1. 设计LangGraph工作流
-2. 实现文档处理流程
-3. 构建查询响应系统
-4. 添加状态管理
+### 核心组件
 
-### 第四阶段：智能Agent（Day 7-8）
-1. 创建专业Agent团队
-2. 实现Agent协作机制
-3. 集成到工作流中
-4. 优化协作效率
+- **MCP 协议层**: 标准化的 AI 工具调用接口
+- **RAG 引擎**: 检索增强生成系统
+- **向量存储**: ChromaDB 本地向量数据库
+- **关系数据库**: PostgreSQL 存储结构化数据
+- **AI 模型**: OpenAI GPT 进行文本生成和理解
 
-### 第五阶段：系统集成（Day 9-10）
-1. 构建API网关
-2. 实现认证授权
-3. 创建前端界面
-4. 系统集成测试
+## 🛠️ 使用示例
 
-### 第六阶段：优化部署（Day 11-12）
-1. 性能优化
-2. 添加监控告警
-3. 容器化部署
-4. 编写文档
-
-## 快速开始
+### 启动服务器
 
 ```bash
-# 1. 克隆项目
-cd ~/ai-guide/project
-
-# 2. 安装依赖
-pip install -r requirements.txt
-
-# 3. 配置环境变量
-cp .env.example .env
-# 编辑 .env 添加你的API密钥
-
-# 4. 启动MCP服务
-python mcp_services/start_all.py
-
-# 5. 启动API网关
-uvicorn api_gateway.main:app --reload
-
-# 6. 启动前端
-streamlit run frontend/streamlit_app.py
+./start.sh
 ```
 
-## 部署指南
+### 客户端连接
 
-### 本地开发
-```bash
-# 使用Docker Compose
-docker-compose up -d
+```python
+from mcp.client.session import ClientSession
+from mcp.client.stdio import stdio_client, StdioServerParameters
+
+# 连接到MCP服务器
+server_params = StdioServerParameters(
+    command="python",
+    args=["mcp_services/rag_service/server.py"]
+)
+
+async with stdio_client(server_params) as (read, write):
+    async with ClientSession(read, write) as session:
+        await session.initialize()
+        tools = await session.list_tools()
+        print(f"可用工具: {len(tools.tools)}")
 ```
 
-### 生产部署
-```bash
-# 构建镜像
-docker build -t doc-assistant .
+## 📈 监控和日志
 
-# 使用Kubernetes
-kubectl apply -f k8s/
-```
+系统提供实时的连接监控和操作日志：
 
-## 项目亮点
+- 🔌 客户端连接/断开状态
+- 📋 工具调用记录
+- 📁 资源访问日志
+- ⚠️ 错误和异常追踪
 
-1. **技术整合**：将课程所有技术有机结合
-2. **生产就绪**：考虑了实际部署需求
-3. **可扩展性**：模块化设计，易于扩展
-4. **最佳实践**：遵循企业级开发标准
+## 🔮 未来规划
 
-## 下一步计划
+- 📁 文件服务 (支持多格式文档)
+- 🌐 API 网关 (统一 REST 接口)
+- 🖥️ Web 前端 (用户界面)
+- 🐳 容器化部署
 
-- [ ] 添加更多文档格式支持
-- [ ] 实现多语言处理
-- [ ] 集成更多LLM模型
-- [ ] 优化检索算法
-- [ ] 添加知识图谱功能
+## 📝 开发说明
 
-## 许可证
+### 添加新工具
+
+1. 在 `server.py` 中添加工具定义
+2. 实现工具的业务逻辑
+3. 添加相应的错误处理和日志
+
+### 配置说明
+
+- `.env`: 环境变量 (API密钥、数据库连接)
+- `docker-compose.yml`: 容器配置
+- `requirements.txt`: Python 依赖
+
+## 📄 许可证
 
 MIT License

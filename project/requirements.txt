@@ -1,0 +1,38 @@
+# 核心框架
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+aiofiles>=23.2.1
+
+# MCP和AI框架
+mcp>=1.0.0
+langchain>=0.1.0
+langchain-openai>=0.0.5
+langchain-community>=0.0.10
+langgraph>=0.2.0
+crewai>=0.141.0
+
+# 数据库
+asyncpg>=0.29.0
+psycopg2-binary>=2.9.9
+redis>=5.0.0
+chromadb>=0.4.22
+
+# 前端
+streamlit>=1.29.0
+plotly>=5.18.0
+
+# 工具和实用程序
+python-dotenv>=1.0.0
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# 监控和日志
+prometheus-client>=0.19.0
+python-json-logger>=2.0.0
+
+# 开发工具
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+black>=23.12.0
+isort>=5.13.0
