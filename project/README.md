@@ -57,12 +57,17 @@
    nano .env  # 设置 OPENAI_API_KEY
    ```
 
-3. **启动服务**
+3. **启动Web界面**
+   ```bash
+   ./run_web.sh
+   ```
+
+4. **或启动MCP服务**
    ```bash
    ./start.sh
    ```
 
-4. **测试环境**
+5. **测试环境**
    ```bash
    python test.py
    ```
@@ -74,15 +79,21 @@ project/
 ├── mcp_services/           # MCP服务
 │   └── rag_service/        # RAG问答服务
 │       └── server.py       # 核心服务器
+├── frontend/               # Web前端
+│   ├── app.py             # 完整版Web界面 (需要MCP)
+│   └── simple_app.py      # 简化版Web界面 (直接RAG)
 ├── data/                   # 数据存储
 │   ├── vector_db/          # 向量数据库
 │   ├── uploads/            # 文件上传
 │   └── cache/              # 缓存
+├── logs/                   # 日志文件
 ├── .env                    # 环境变量配置
 ├── docker-compose.yml      # Docker配置
 ├── requirements.txt        # Python依赖
 ├── setup.sh               # 环境设置脚本
-├── start.sh               # 启动脚本
+├── start.sh               # 启动MCP服务
+├── run_web.sh             # 启动Web界面 (推荐)
+├── start_web.sh           # 启动完整Web界面
 └── test.py                # 环境测试脚本
 ```
 
@@ -104,15 +115,33 @@ MCP客户端 ←→ MCP服务器 ←→ RAG引擎 ←→ 数据库
 - **关系数据库**: PostgreSQL 存储结构化数据
 - **AI 模型**: OpenAI GPT 进行文本生成和理解
 
-## 🛠️ 使用示例
+## 🛠️ 使用方式
 
-### 启动服务器
+### 🌐 Web界面 (推荐)
+
+最简单的使用方式，提供用户友好的图形界面：
+
+```bash
+./run_web.sh
+```
+
+访问 http://localhost:8501 打开Web界面
+
+**功能包括：**
+- 📝 文档管理：添加、搜索文档
+- 🔍 智能搜索：语义搜索和关键词搜索  
+- 💬 智能问答：基于知识库的对话
+- 📊 统计信息：实时查看知识库状态
+
+### 🔧 MCP服务
+
+底层MCP协议接口，适合开发集成：
 
 ```bash
 ./start.sh
 ```
 
-### 客户端连接
+### 客户端连接示例
 
 ```python
 from mcp.client.session import ClientSession
